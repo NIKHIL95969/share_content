@@ -26,11 +26,11 @@ export default function Home() {
             },
           }
       );
-      console.log("After posting link", response);
       setPost({ content: "" }); 
-
+      
       if (response.status === 200) {
-        setAllContent(response.data.data.allpost);
+        console.log("After posting link", response);
+        setAllContent(response.data.allpost);
       }
 
     } catch (error) {
