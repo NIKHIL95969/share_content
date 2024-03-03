@@ -21,7 +21,7 @@ export default function Home() {
         "/api/sharecontent/createcontent/",
         post
       );
-      console.log(response)
+      console.log("After posting link", response);
       setPost({ content: "" }); 
 
       if (response.status === 200) {
