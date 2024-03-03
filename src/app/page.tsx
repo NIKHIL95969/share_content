@@ -19,7 +19,12 @@ export default function Home() {
     try {
       const response = await axios.post(
         "/api/sharecontent/createcontent/",
-        post
+          post,
+          {
+            headers: {
+              "Cache-Control": "no-cache, no-store, must-revalidate"
+            },
+          }
       );
       console.log("After posting link", response);
       setPost({ content: "" }); 

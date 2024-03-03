@@ -18,8 +18,9 @@ export async function POST(request: NextRequest){
         if(!savedPost){
             return NextResponse.json({error: 'Unable to create post'}, {status: 400});
         }
+        const allpost = await ContentPost.find({}, null, { sort: { createdAt: -1 } });
 
-        return NextResponse.json({message: 'Post saved successfully', savedPost}, {status: 200},);
+        return NextResponse.json({message: 'Post saved successfully', allpost}, {status: 200},);
 
     } catch (error: any) {
         return NextResponse.json( {error: error.message}, {status: 500});
