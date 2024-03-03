@@ -19,7 +19,7 @@ export async function POST(request: NextRequest){
             return NextResponse.json({error: 'Unable to create post'}, {status: 400});
         }
 
-        return NextResponse.json({message: 'Post saved successfully'}, {status: 200},);
+        return NextResponse.json({message: 'Post saved successfully', savedPost}, {status: 200},);
 
     } catch (error: any) {
         return NextResponse.json( {error: error.message}, {status: 500});
