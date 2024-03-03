@@ -33,9 +33,9 @@ export default function Home() {
   const handleGetContent = async () => {
     try {
       const response = await axios.get(API_URL);
+      console.log("Content successfully fetched!", response);
       if (response.status === 200) {
         setAllContent(response.data.data);
-        console.log("Content successfully fetched!");
       } else {
         console.error("Unexpected response status:", response.status);
       }
