@@ -7,14 +7,13 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const API_URL = "/api/sharecontent/getcontent";
+const API_URL = "/api/sharecontent/getcontent ";
 
 export default function Home() {
   const [allContent, setAllContent] = useState<any[]>([]);
   const [post, setPost] = useState({
     content: "", // Initialize content as empty string
   });
-  const[hitroute, setHitRoute] = useState(false);
 
   const handleCreate = async () => {
     try {
@@ -22,17 +21,27 @@ export default function Home() {
         "/api/sharecontent/createcontent/",
         post
       );
-
+      console.log(response)
       setPost({ content: "" }); 
-      setHitRoute(true);
+
+      if (response.status === 200) {
+        setAllContent(response.data.data);
+      }
+
     } catch (error) {
       console.error("Error creating post:", error);
+
     }
   };
 
   const handleGetContent = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(API_URL, {
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate"
+        },
+      });
+  
       console.log("Content successfully fetched!", response);
       if (response.status === 200) {
         setAllContent(response.data.data);
@@ -44,10 +53,9 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
+  useEffect(()=>{
     handleGetContent();
-    setHitRoute(false)
-  }, [hitroute]);
+  },[])
 
   return (
     <>
