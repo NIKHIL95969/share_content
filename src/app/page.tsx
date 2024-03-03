@@ -12,7 +12,7 @@ const API_URL = "/api/sharecontent/getcontent ";
 export default function Home() {
   const [allContent, setAllContent] = useState<any[]>([]);
   const [post, setPost] = useState({
-    content: "", // Initialize content as empty string
+    content: "", 
   });
 
   const handleCreate = async () => {
@@ -30,7 +30,7 @@ export default function Home() {
       setPost({ content: "" }); 
 
       if (response.status === 200) {
-        setAllContent(response.data.data);
+        setAllContent(response.data.data.allpost);
       }
 
     } catch (error) {
@@ -58,9 +58,9 @@ export default function Home() {
     }
   };
 
-  useEffect(()=>{
-    handleGetContent();
-  },[])
+  // useEffect(()=>{
+  //   handleGetContent();
+  // },[])
 
   return (
     <>
