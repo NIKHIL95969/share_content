@@ -22,7 +22,7 @@ export default function Home() {
         "/api/sharecontent/createcontent/",
         post
       );
-
+      console.log("After posting link", response);
       setPost({ content: "" }); 
       setHitRoute(true);
     } catch (error) {
