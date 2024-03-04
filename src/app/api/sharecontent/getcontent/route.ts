@@ -12,6 +12,8 @@ export async function GET(request: NextRequest, response: NextResponse){
         // const ipAddress = request.headers.get('x-forwarded-for') || "";
         // console.log("ip address is", ipAddress)
 
+        
+
         const data = await ContentPost.find({}, null, { sort: { createdAt: -1 } });
         console.log(data)
 

@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 const API_URL = "/api/sharecontent/getcontent ";
 
 export default function Home() {
+
   const [allContent, setAllContent] = useState<any[]>([]);
   const [post, setPost] = useState({
     content: "", 
@@ -17,6 +18,7 @@ export default function Home() {
 
   const handleCreate = async () => {
     try {
+      
       const response = await axios.post(
         "/api/sharecontent/createcontent/",
           post,
@@ -41,26 +43,26 @@ export default function Home() {
 
   const handleGetContent = async () => {
     try {
-      const response = await axios.get(API_URL, {
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate"
-        },
-      });
+      const result = await fetch(API_URL, {cache: 'no-store'});
   
-      console.log("Content successfully fetched!", response);
-      if (response.status === 200) {
-        setAllContent(response.data.data);
+      const response = await result.json();
+      // console.log("Get request resp", response)
+      
+      if (response) {
+        setAllContent(response.data);
+        // console.log("Content successfully fetched!", response);
       } else {
         console.error("Unexpected response status:", response.status);
       }
+
     } catch (error) {
       console.error("Error fetching content:", error);
     }
   };
 
-  // useEffect(()=>{
-  //   handleGetContent();
-  // },[])
+  useEffect(()=>{
+    handleGetContent();
+  },[])
 
   return (
     <>
@@ -98,7 +100,7 @@ export default function Home() {
           <Button onClick={handleGetContent} type="submit" >
             Get Links
           </Button>
-          {allContent && allContent.length == 0 && (
+          {!allContent && (
             <div className="flex justify-center items-center">
               <h1 className="text-6xl font-black">No link</h1>
             </div>
