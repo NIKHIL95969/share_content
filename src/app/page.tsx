@@ -43,14 +43,17 @@ export default function Home() {
 
   const handleGetContent = async () => {
     try {
-      const result = await fetch(API_URL, {cache: 'no-store'});
+      const result = await fetch(API_URL, {
+        cache: 'no-store',
+        method: 'POST'
+      });
   
       const response = await result.json();
       // console.log("Get request resp", response)
       
       if (response) {
         setAllContent(response.data);
-        // console.log("Content successfully fetched!", response);
+        console.log("Content successfully fetched!", response);
       } else {
         console.error("Unexpected response status:", response.status);
       }

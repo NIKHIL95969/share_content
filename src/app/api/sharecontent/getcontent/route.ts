@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 connect();
 
-export async function GET(request: NextRequest, response: NextResponse){
+export async function POST(request: NextRequest, response: NextResponse){
     try {
         console.log("Hit the server for getContent")
         
