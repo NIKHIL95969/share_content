@@ -3,6 +3,7 @@
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -88,6 +89,7 @@ export default function Home() {
                   }
                   placeholder="Enter link to share"
                 />
+                
                 <Button onClick={handleCreate} type="submit">
                   Share link
                 </Button>
@@ -103,6 +105,16 @@ export default function Home() {
           <Button onClick={handleGetContent} type="submit" >
             Get Links
           </Button>
+          <div className="grid w-full gap-2">
+            <Textarea 
+            rows={10}
+            className="resize-none"
+            value={post.content}
+            onChange={(e) =>
+              setPost({ ...post, content: e.target.value })
+            }
+            placeholder="Type your message here." />
+          </div>
           {!allContent && (
             <div className="flex justify-center items-center">
               <h1 className="text-6xl font-black">No link</h1>
@@ -113,14 +125,14 @@ export default function Home() {
               {allContent.map((content) => (
                 <div
                   key={content.id || Math.random()}
-                  className="bg-white dark:bg-neutral-900 rounded shadow-md p-4"
+                  className="bg-white max-h-96 dark:bg-neutral-900 rounded shadow-md p-4"
                 >
                   <p className="text-blue-800 text-lg font-bold mb-2">
                     {content.title || "Links"}
                   </p>
-                  <p className="text-gray-400 dark:text-white mb-4 dark:bg-black bg-slate-800 p-2 rounded-sm overflow-y-auto ">
+                  <pre className="text-gray-400 dark:text-white mb-4 dark:bg-black bg-slate-800 p-2 rounded-sm overflow-y-auto h-72 ">
                     {content.content || "Content"}
-                  </p>
+                  </pre>
                   <p className="text-gray-400 dark:text-white text-sm text-wrap">
                     Created:{" "}
                     {new Date(

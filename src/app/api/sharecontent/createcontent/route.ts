@@ -9,6 +9,8 @@ export async function POST(request: NextRequest){
     try {
         const reqBody = await request.json();
         const { content} = reqBody;
+        
+        console.log(content);
 
         const createContent = new ContentPost({
             content
