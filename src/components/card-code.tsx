@@ -2,7 +2,8 @@
 
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Copy, Check } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Copy, Check, Expand } from "lucide-react"
 import { useState, useEffect } from "react"
 import hljs from "highlight.js/lib/core"
 import javascript from "highlight.js/lib/languages/javascript"
@@ -28,6 +29,7 @@ interface CodeCardProps {
 
 export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
   const [copied, setCopied] = useState(false)
+  const [modalCopied, setModalCopied] = useState(false)
   const [highlightedCode, setHighlightedCode] = useState("")
   const [detectedLanguage, setDetectedLanguage] = useState("")
 
@@ -54,6 +56,16 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
     }
   }
 
+  const handleModalCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setModalCopied(true)
+      setTimeout(() => setModalCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy code:", err)
+    }
+  }
+
   return (
     <Card className="overflow-hidden bg-white shadow-lg min-h-96">
       {/* Code content with dark background */}
@@ -71,15 +83,59 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
           />
         </pre>
 
-        {/* Copy button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-700"
-          onClick={handleCopy}
-        >
-          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        </Button>
+        {/* Action buttons */}
+        <div className="absolute top-4 right-4 flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white hover:bg-gray-700"
+            onClick={handleCopy}
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          </Button>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-white hover:bg-gray-700"
+              >
+                <Expand className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0">
+              <DialogHeader className="p-6 pb-0">
+                <DialogTitle className="text-lg font-semibold">
+                  {title || "Code Viewer"}
+                </DialogTitle>
+                {createdAt && (
+                  <p className="text-sm text-gray-500">Created: {createdAt}</p>
+                )}
+              </DialogHeader>
+              
+              <div className="bg-[#1a1b26] mx-6 mb-6 rounded-lg relative flex-1 overflow-hidden min-h-[700px]">
+                <div className="p-6 h-full">
+                  <pre className="overflow-auto h-full rounded">
+                    <code
+                      className={`hljs language-${detectedLanguage} text-sm leading-relaxed`}
+                      dangerouslySetInnerHTML={{ __html: highlightedCode }}
+                    />
+                  </pre>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-700"
+                    onClick={handleModalCopy}
+                  >
+                    {modalCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Footer with timestamp */}
