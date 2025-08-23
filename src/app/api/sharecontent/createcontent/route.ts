@@ -11,16 +11,30 @@ export async function POST(request: NextRequest){
         const { content} = reqBody;
         
         console.log(content);
+        const { searchParams } = new URL(request.url);
+
+        const temp = searchParams.get("temp");
+        let filter: any = {};
+        if(temp){
+            const now = new Date();
+            const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            filter.createdAt = { $gte: yesterday };
+            filter.temp = true
+        }
+
+
+        console.log("temp", temp)
 
         const createContent = new ContentPost({
-            content
+            content,
+            temp
         });
         const savedPost = await createContent.save();
         
         if(!savedPost){
             return NextResponse.json({error: 'Unable to create post'}, {status: 400});
         }
-        const allpost = await ContentPost.find({}, null, { sort: { createdAt: -1 } });
+        const allpost = await ContentPost.find(filter, null, { sort: { createdAt: -1 } });
 
         return NextResponse.json({message: 'Post saved successfully', allpost}, {status: 200},);
 

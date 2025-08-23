@@ -5,6 +5,11 @@ const contentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    temp: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
 }, { timestamps: true })
 
 const ContentPost = mongoose.models.contents || mongoose.model("contents", contentSchema);

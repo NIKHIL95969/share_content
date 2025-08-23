@@ -4,33 +4,37 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@radix-ui/react-dropdown-menu";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const API_URL = "/api/sharecontent/getcontent ";
 
 export default function Home() {
 
   const [allContent, setAllContent] = useState<any[]>([]);
   const [post, setPost] = useState({
-    content: "", 
+    content: "",
   });
+
+  const [checked, setChecked] = useState(false);
+  const API_URL = checked ? "/api/sharecontent/getcontent?temp=true" : "/api/sharecontent/getcontent";
+
 
   const handleCreate = async () => {
     try {
-      
+
       const response = await axios.post(
-        "/api/sharecontent/createcontent/",
-          post,
-          {
-            headers: {
-              "Cache-Control": "no-cache, no-store, must-revalidate"
-            },
-          }
+        checked ? "/api/sharecontent/createcontent?temp=true" : "/api/sharecontent/createcontent",
+        post,
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate"
+          },
+        }
       );
-      setPost({ content: "" }); 
-      
+      setPost({ content: "" });
+
       if (response.status === 200) {
         console.log("After posting link", response);
         setAllContent(response.data.allpost);
@@ -48,10 +52,10 @@ export default function Home() {
         cache: 'no-store',
         method: 'POST'
       });
-  
+
       const response = await result.json();
       // console.log("Get request resp", response)
-      
+
       if (response) {
         setAllContent(response.data);
         console.log("Content successfully fetched!", response);
@@ -64,9 +68,9 @@ export default function Home() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     handleGetContent();
-  },[])
+  }, [checked])
 
   return (
     <>
@@ -80,7 +84,7 @@ export default function Home() {
               </ul>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex w-full max-w-sm items-center space-x-2">
+              <div className="flex w-full  items-center space-x-2">
                 <Input
                   className="lg:w-96"
                   value={post.content}
@@ -89,10 +93,15 @@ export default function Home() {
                   }
                   placeholder="Enter link to share"
                 />
-                
+
                 <Button onClick={handleCreate} type="submit">
                   Share link
                 </Button>
+                <div className="flex flex-row items-center gap-2 rounded-md px-4 bg-primary text-primary-foreground shadow hover:bg-primary/90">
+                  <label htmlFor="">Temporary</label>
+                  <Input checked={checked}
+                    onChange={(e) => setChecked(e.target.checked)} type="checkbox" name="temp" />
+                </div>
               </div>
               <ModeToggle />
             </div>
@@ -105,15 +114,18 @@ export default function Home() {
           <Button onClick={handleGetContent} type="submit" >
             Get Links
           </Button>
+          <h1 className="text-2xl font-bold">
+            {checked && "Temporary share is available for 24 hours only."}
+          </h1>
           <div className="grid w-full gap-2">
-            <Textarea 
-            rows={10}
-            className="resize-none"
-            value={post.content}
-            onChange={(e) =>
-              setPost({ ...post, content: e.target.value })
-            }
-            placeholder="Type your message here." />
+            <Textarea
+              rows={10}
+              className="resize-none"
+              value={post.content}
+              onChange={(e) =>
+                setPost({ ...post, content: e.target.value })
+              }
+              placeholder="Type your message here." />
           </div>
           {!allContent && (
             <div className="flex justify-center items-center">
