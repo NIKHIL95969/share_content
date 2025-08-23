@@ -1,5 +1,6 @@
 "use client";
 
+import { CodeCard } from "@/components/card-code";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -135,23 +136,9 @@ export default function Home() {
           {allContent && allContent.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               {allContent.map((content) => (
-                <div
-                  key={content.id || Math.random()}
-                  className="bg-white max-h-96 dark:bg-neutral-900 rounded shadow-md p-4"
-                >
-                  <p className="text-blue-800 text-lg font-bold mb-2">
-                    {content.title || "Links"}
-                  </p>
-                  <pre className="text-gray-400 dark:text-white mb-4 dark:bg-black bg-slate-800 p-2 rounded-sm overflow-y-auto h-72 ">
-                    {content.content || "Content"}
-                  </pre>
-                  <p className="text-gray-400 dark:text-white text-sm text-wrap">
-                    Created:{" "}
-                    {new Date(
+                  <CodeCard key={content.id || Math.random()} code={content.content} createdAt={new Date(
                       content.createdAt || "2024-03-02"
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
+                    ).toLocaleDateString()} title="Code" />
               ))}
             </div>
           )}
