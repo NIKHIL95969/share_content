@@ -13,7 +13,7 @@ export async function POST(request: NextRequest){
         console.log(content);
         const { searchParams } = new URL(request.url);
 
-        const temp = searchParams.get("temp");
+        const temp = searchParams.get("temp") === "true";
         let filter: any = {};
         if(temp){
             const now = new Date();

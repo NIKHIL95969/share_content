@@ -85,24 +85,25 @@ export default function Home() {
               </ul>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex w-full  items-center space-x-2">
-                <Input
-                  className="lg:w-96"
-                  value={post.content}
-                  onChange={(e) =>
-                    setPost({ ...post, content: e.target.value })
-                  }
-                  placeholder="Enter link to share"
-                />
+              <Input
+                className="lg:w-96"
+                value={post.content}
+                onChange={(e) =>
+                  setPost({ ...post, content: e.target.value })
+                }
+                placeholder="Enter link to share"
+              />
 
-                <Button onClick={handleCreate} type="submit">
-                  Share link
-                </Button>
-                <div className="flex flex-row items-center gap-2 rounded-md px-4 bg-primary text-primary-foreground shadow hover:bg-primary/90">
-                  <label htmlFor="">Temporary</label>
-                  <Input checked={checked}
-                    onChange={(e) => setChecked(e.target.checked)} type="checkbox" name="temp" />
-                </div>
+              <Button onClick={handleCreate} type="submit">
+                Share link
+              </Button>
+              <Button onClick={handleGetContent} type="submit">
+                Get Links
+              </Button>
+              <div className="flex flex-row items-center gap-2 rounded-md px-4 bg-primary text-primary-foreground shadow hover:bg-primary/90">
+                <label htmlFor="">Temporary</label>
+                <Input checked={checked}
+                  onChange={(e) => setChecked(e.target.checked)} type="checkbox" name="temp" />
               </div>
               <ModeToggle />
             </div>
@@ -112,9 +113,6 @@ export default function Home() {
 
       <div className="max-w-8xl mx-auto">
         <div className="py-4 lg:px-8 mx-4 lg:mx-8">
-          <Button onClick={handleGetContent} type="submit" >
-            Get Links
-          </Button>
           <h1 className="text-2xl font-bold">
             {checked && "Temporary share is available for 24 hours only."}
           </h1>
