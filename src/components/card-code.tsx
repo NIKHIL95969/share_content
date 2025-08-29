@@ -76,9 +76,9 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
           </div>
         )}
 
-        <pre className="overflow-x-auto overflow-y-auto min-h-72 max-h-72 rounded">
+        <pre className="overflow-x-auto overflow-y-auto min-h-72 max-h-72 rounded custom-scrollbar">
           <code
-            className={`hljs language-${detectedLanguage} text-sm leading-relaxed`}
+            className={`hljs language-${detectedLanguage} text-sm leading-relaxed min-h-72 custom-scrollbar`}
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
           />
         </pre>
@@ -104,7 +104,7 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
                 <Expand className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0">
+            <DialogContent className="max-w-6xl w-[95vw] h-auto max-h-[90vh] p-0">
               <DialogHeader className="p-6 pb-0">
                 <DialogTitle className="text-lg font-semibold">
                   {title || "Code Viewer"}
@@ -114,9 +114,9 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
                 )}
               </DialogHeader>
               
-              <div className="bg-[#1a1b26] mx-6 mb-6 rounded-lg relative flex-1 overflow-hidden min-h-[700px]">
-                <div className="p-6 h-full">
-                  <pre className="overflow-auto h-full rounded">
+              <div className="bg-[#1a1b26] mx-6 mb-6 rounded-lg relative flex-1 overflow-hidden">
+                <div className="p-6 h-[70vh] overflow-auto">
+                  <pre className="overflow-auto h-full rounded custom-scrollbar">
                     <code
                       className={`hljs language-${detectedLanguage} text-sm leading-relaxed`}
                       dangerouslySetInnerHTML={{ __html: highlightedCode }}
@@ -142,9 +142,9 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
       {createdAt && (
         <div className="px-6 py-4 max-h-12 bg-gray-50 border-t flex items-center justify-between">
           <span className="text-sm text-gray-500">Created: {createdAt}</span>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600" onClick={handleCopy}>
+          {/* <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600" onClick={handleCopy}>
             <Copy className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </div>
       )}
     </Card>

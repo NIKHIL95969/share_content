@@ -74,3 +74,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+.custom-scrollbar {
+  height: fit-content; /* Must have a fixed height to scroll */
+  overflow-y: auto; /* Enable vertical scrolling */
+  background-color: #f1f1f1;
+}
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px; /* <<< Makes the scrollbar thinner */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the tracking area */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scroll thumb */
+  border-radius: 4px; /* Round the corners of the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the thumb on hover */
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin; /* <<< "thin", "auto", or "none" */
+  scrollbar-color: #888 #f1f1f1; /* thumb-color track-color */
+}
