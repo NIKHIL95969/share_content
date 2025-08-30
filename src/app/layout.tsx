@@ -2,6 +2,16 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Tasky Now - Share & Manage Content",
+  description: "A modern platform for sharing and managing content with real-time collaboration and temporary sharing options.",
+  keywords: ["content sharing", "task management", "collaboration", "productivity"],
+  authors: [{ name: "Tasky Now Team" }],
+  viewport: "width=device-width, initial-scale=1",
+};
  
 export default function RootLayout({
   children,
@@ -12,7 +22,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body>
+        <body className={inter.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
