@@ -62,7 +62,7 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
 
     setHighlightedCode(result.value)
     setDetectedLanguage(result.language || "text")
-  }, [code, language, theme])
+  }, [code, language])
 
   const handleCopy = async () => {
     try {
@@ -85,7 +85,7 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden min-h-96">
+    <Card className="overflow-hidden min-h-96 transition-transform duration-200 ease-in-out hover:scale-105">
       {/* Code content with theme-aware background */}
       <div className="p-6 relative">
         {title && (
@@ -94,9 +94,9 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
           </div>
         )}
 
-        <pre className="overflow-x-auto overflow-y-auto min-h-72 max-h-72 rounded custom-scrollbar">
+        <pre className="overflow-x-auto overflow-y-auto min-h-72 max-h-72 rounded custom-scrollbar max-w-full">
           <code
-            className={`hljs language-${detectedLanguage} text-sm leading-relaxed min-h-72 custom-scrollbar`}
+            className={`hljs language-${detectedLanguage} text-sm leading-relaxed min-h-72 custom-scrollbar max-w-full`}
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
           />
         </pre>
@@ -122,18 +122,15 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
                 <Expand className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-6xl w-[95vw] h-auto max-h-[90vh] p-0">
-              <DialogHeader className="p-6 pb-0">
+            <DialogContent className="w-[95vw] max-w-6xl h-auto max-h-[90vh] p-0">
+              <DialogHeader className="p-4 sm:p-6 pb-0">
                 <DialogTitle className="text-lg font-semibold">
                   {title || "Code Viewer"}
                 </DialogTitle>
-                {createdAt && (
-                  <p className="text-sm text-muted-foreground">Created: {createdAt}</p>
-                )}
               </DialogHeader>
               
-              <div className="mx-6 mb-6 rounded-lg relative flex-1 overflow-hidden">
-                <div className="p-6 h-[70vh] overflow-auto">
+              <div className="m-4 sm:m-6 rounded-lg relative flex-1 overflow-hidden">
+                <div className="p-4 sm:p-6 h-[70vh] overflow-auto">
                   <pre className="overflow-auto h-full rounded custom-scrollbar">
                     <code
                       className={`hljs language-${detectedLanguage} text-sm leading-relaxed`}
@@ -159,7 +156,7 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
       {/* Footer with timestamp */}
       {createdAt && (
         <div className="px-6 py-4 max-h-12 bg-muted/50 border-t flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Created: {createdAt}</span>
+          <span className="text-sm text-muted-foreground flex-grow">Created: {createdAt}</span>
         </div>
       )}
     </Card>

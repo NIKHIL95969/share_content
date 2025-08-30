@@ -16,6 +16,8 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState, useCallback, memo } from "react";
+import PaginationControls from "@/components/pagination-controls";
+import { Share2, RefreshCw, Clock } from "lucide-react";
 
 // Loading component with animated dots
 const LoadingSpinner = memo(() => (
@@ -45,12 +47,14 @@ const ShareContentDialog = memo(({
   isOpen, 
   onOpenChange, 
   onSubmit, 
-  checked 
+  checked,
+  setChecked
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (content: string) => void;
   checked: boolean;
+  setChecked: (checked: boolean) => void;
 }) => {
   const [dialogContent, setDialogContent] = useState("");
 
@@ -73,12 +77,10 @@ const ShareContentDialog = memo(({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Input
-          className="lg:w-96 cursor-pointer transition-all duration-200 hover:shadow-md focus:shadow-lg border-2 hover:border-primary/50 focus:border-primary"
-          placeholder="Enter link to share"
-          readOnly
-          onClick={() => onOpenChange(true)}
-        />
+        <Button variant="secondary">
+          <Share2 className="mr-2 h-4 w-4" />
+          Share Something
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto border-0 shadow-2xl bg-gradient-to-br from-background to-muted/30">
         <DialogHeader className="pb-6">
@@ -97,7 +99,19 @@ const ShareContentDialog = memo(({
               placeholder="Type your content here..."
             />
           </div>
-          <div className="flex justify-end gap-4 pt-6 border-t border-border/50">
+          <div className="flex items-center justify-between gap-4 pt-6 border-t border-border/50">
+            <div className="flex items-center gap-2">
+              <Input
+                id="temp-checkbox-dialog"
+                checked={checked}
+                onChange={(e) => setChecked(e.target.checked)}
+                type="checkbox"
+                name="temp"
+                className="w-4 h-4 accent-primary cursor-pointer"
+              />
+              <label className="text-sm font-medium text-foreground/80 cursor-pointer" htmlFor="temp-checkbox-dialog">Temporary (24 hours)</label>
+            </div>
+            <div className="flex gap-4">
             <Button 
               variant="outline" 
               onClick={() => onOpenChange(false)}
@@ -112,6 +126,7 @@ const ShareContentDialog = memo(({
             >
               Share Content
             </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
@@ -151,7 +166,7 @@ const ContentDisplay = memo(({ allContent, isLoading }: { allContent: any[], isL
           createdAt={new Date(
             content.createdAt || "2024-03-02"
           ).toLocaleDateString()} 
-          title="Code" 
+          title="Content" 
         />
       ))}
     </div>
@@ -162,37 +177,14 @@ ContentDisplay.displayName = "ContentDisplay";
 
 export default function Home() {
   const [allContent, setAllContent] = useState<any[]>([]);
-  const [post, setPost] = useState({
-    content: "",
-  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(6);
+  const [total, setTotal] = useState(0);
   
-  const API_URL = checked ? "/api/sharecontent/getcontent?temp=true" : "/api/sharecontent/getcontent";
-
-  const handleCreate = useCallback(async () => {
-    try {
-      const response = await axios.post(
-        checked ? "/api/sharecontent/createcontent?temp=true" : "/api/sharecontent/createcontent",
-        post,
-        {
-          headers: {
-            "Cache-Control": "no-cache, no-store, must-revalidate"
-          },
-        }
-      );
-      setPost({ content: "" });
-
-      if (response.status === 200) {
-        console.log("After posting link", response);
-        setAllContent(response.data.allpost);
-      }
-
-    } catch (error) {
-      console.error("Error creating post:", error);
-    }
-  }, [post, checked]);
+  const API_URL = checked ? `/api/sharecontent/getcontent?temp=true&page=${page}&limit=${limit}` : `/api/sharecontent/getcontent?page=${page}&limit=${limit}`;
 
   const handleDialogSubmit = useCallback(async (content: string) => {
           try {
@@ -231,6 +223,7 @@ export default function Home() {
 
       if (response) {
         setAllContent(response.data);
+        setTotal(response.total);
         console.log("Content successfully fetched!", response);
       } else {
         console.error("Unexpected response status:", response.status);
@@ -245,7 +238,7 @@ export default function Home() {
 
   useEffect(() => {
     handleGetContent();
-  }, [handleGetContent]);
+  }, [checked, page]);
 
   return (
     <>
@@ -255,50 +248,34 @@ export default function Home() {
           <div className="py-6 lg:px-8 mx-4 lg:mx-8">
             <header className="flex flex-col sm:flex-row items-center justify-between">
               <div className="flex flex-row items-center">
-                <img 
-                  src="/LOGO.png" 
-                  alt="Tasky Now Logo" 
-                  className="h-12 w-auto mr-4 object-contain transition-transform duration-200 hover:scale-105 cursor-pointer"
-                  title="Tasky Now - Share & Manage Content"
-                />
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Tasky Now
                 </h1>
               </div>
-              <div className="flex items-center gap-3 mt-4 sm:mt-0">
+              <div className="flex items-center flex-wrap gap-3 mt-4 sm:mt-0">
                 <ShareContentDialog
                   isOpen={isDialogOpen}
                   onOpenChange={setIsDialogOpen}
                   onSubmit={handleDialogSubmit}
                   checked={checked}
+                  setChecked={setChecked}
                 />
-
-                <Button 
-                  onClick={handleCreate} 
-                  variant="secondary"
-                  className="px-6 py-2 hover:shadow-md transition-all duration-200"
-                >
-                  Share link
-                </Button>
                 <Button 
                   onClick={handleGetContent} 
                   variant="outline"
                   className="px-6 py-2 hover:bg-muted/50 transition-all duration-200"
                 >
-                  Get Links
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh
                 </Button>
-                
-                {/* Enhanced temporary toggle */}
-                <div className="flex flex-row items-center gap-3 rounded-lg px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-sm">
-                  <label className="text-sm font-medium text-foreground/80">Temporary</label>
-                  <Input 
-                    checked={checked}
-                    onChange={(e) => setChecked(e.target.checked)} 
-                    type="checkbox" 
-                    name="temp"
-                    className="w-4 h-4 accent-primary"
-                  />
-                </div>
+                <Button
+                  onClick={() => setChecked(!checked)}
+                  variant={checked ? "secondary" : "outline"}
+                  className="px-4 py-2 transition-all duration-200"
+                >
+                  <Clock className="mr-2 h-4 w-4" />
+                  View Temporary
+                </Button>
                 <ModeToggle />
               </div>
             </header>
@@ -308,7 +285,7 @@ export default function Home() {
 
       {/* Enhanced Main Content */}
       <div className="max-w-8xl mx-auto">
-        <div className="py-8 lg:px-8 mx-4 lg:mx-8">
+        <div className="py-8 px-4 sm:px-6 lg:px-8">
           {checked && (
             <div className="mb-8 p-4 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
               <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-2">
@@ -319,6 +296,7 @@ export default function Home() {
           )}
           
           <ContentDisplay allContent={allContent} isLoading={isLoading} />
+          <PaginationControls page={page} total={total} limit={limit} setPage={setPage} />
         </div>
       </div>
     </>
