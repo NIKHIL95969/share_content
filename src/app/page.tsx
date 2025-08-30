@@ -268,6 +268,14 @@ export default function Home() {
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Refresh
                 </Button>
+                <Button
+                  onClick={() => setChecked(!checked)}
+                  variant={checked ? "secondary" : "outline"}
+                  className="px-4 py-2 transition-all duration-200"
+                >
+                  <Clock className="mr-2 h-4 w-4" />
+                  View Temporary
+                </Button>
                 <ModeToggle />
               </div>
             </header>

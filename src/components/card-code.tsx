@@ -127,9 +127,6 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
                 <DialogTitle className="text-lg font-semibold">
                   {title || "Code Viewer"}
                 </DialogTitle>
-                {createdAt && (
-                  <p className="text-sm text-muted-foreground">Created: {createdAt}</p>
-                )}
               </DialogHeader>
               
               <div className="m-4 sm:m-6 rounded-lg relative flex-1 overflow-hidden">
@@ -160,7 +157,6 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
       {createdAt && (
         <div className="px-6 py-4 max-h-12 bg-muted/50 border-t flex items-center justify-between">
           <span className="text-sm text-muted-foreground flex-grow">Created: {createdAt}</span>
-          <span className="text-sm text-muted-foreground">{detectedLanguage}</span>
         </div>
       )}
     </Card>
