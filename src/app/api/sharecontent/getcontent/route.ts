@@ -9,6 +9,9 @@ export async function POST(request: NextRequest, response: NextResponse){
     try {
         const { searchParams } = new URL(request.url);
         const temp = searchParams.get("temp");
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "10");
+        const skip = (page - 1) * limit;
         let filter: any = {};
         if(temp){
             const now = new Date();
@@ -22,9 +25,10 @@ export async function POST(request: NextRequest, response: NextResponse){
 
         
 
-        const data = await ContentPost.find(filter, null, { sort: { createdAt: -1 } });
+        const data = await ContentPost.find(filter, null, { sort: { createdAt: -1 } }).skip(skip).limit(limit);
+        const total = await ContentPost.countDocuments(filter);
 
-        return NextResponse.json({message: 'Data fetched successfully', data}, {status: 200},);
+        return NextResponse.json({message: 'Data fetched successfully', data, total}, {status: 200},);
     } catch (error: any) {
         return NextResponse.json( {error: error.message}, {status: 500});
     }
