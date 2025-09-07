@@ -1,12 +1,24 @@
 import {connect} from '@/dbConfig/dbConfig';
 import ContentPost from '@/models/contentModel';
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit } from '@/lib/rateLimitRedis';
+import { bumpListVersion } from '@/lib/cache';
 
 
 connect();
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest){
     try {
+        const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+        const limitCheck = await rateLimit(ip);
+        if (!limitCheck.allowed) {
+            return NextResponse.json(
+                { error: 'Too many requests. Please try again later.' },
+                { status: 429, headers: { 'Retry-After': String(limitCheck.retryAfter || 60) } }
+            );
+        }
         const reqBody = await request.json();
         const { content} = reqBody;
         
@@ -35,6 +47,9 @@ export async function POST(request: NextRequest){
             return NextResponse.json({error: 'Unable to create post'}, {status: 400});
         }
         const allpost = await ContentPost.find(filter, null, { sort: { createdAt: -1 } });
+        // Invalidate list caches by bumping namespace version
+        await bumpListVersion(temp ? 'true' : null);
+
 
         return NextResponse.json({message: 'Post saved successfully', allpost}, {status: 200},);
 

@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   description: "A modern platform for sharing and managing content with real-time collaboration and temporary sharing options.",
   keywords: ["content sharing", "task management", "collaboration", "productivity"],
   authors: [{ name: "Tasky Now Team" }],
-  viewport: "width=device-width, initial-scale=1",
 };
  
 export default function RootLayout({
