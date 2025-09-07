@@ -17,6 +17,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState, useCallback, memo } from "react";
 import PaginationControls from "@/components/pagination-controls";
+import { SkeletonGrid } from "@/components/skeleton-grid";
 import { Share2, RefreshCw, Clock } from "lucide-react";
 
 // Loading component with animated dots
@@ -137,10 +138,10 @@ const ShareContentDialog = memo(({
 ShareContentDialog.displayName = "ShareContentDialog";
 
 // Memoized content display component
-const ContentDisplay = memo(({ allContent, isLoading }: { allContent: any[], isLoading: boolean }) => {
-  // Show loader while loading
+const ContentDisplay = memo(({ allContent, isLoading, limit }: { allContent: any[], isLoading: boolean, limit?: number }) => {
+  // Show skeleton loader while loading
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <SkeletonGrid count={limit || 6} />;
   }
 
   // Show empty state when no content
