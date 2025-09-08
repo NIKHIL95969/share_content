@@ -50,6 +50,29 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
 
     link.href = theme === "dark" ? darkThemeUrl : lightThemeUrl
   }, [theme])
+  
+  useEffect(() => {
+    if (!code || typeof code !== "string") {
+      setHighlightedCode("")
+      setDetectedLanguage("text")
+      return
+    }
+  
+    let result
+    try {
+      if (language) {
+        result = hljs.highlight(code, { language })
+      } else {
+        result = hljs.highlightAuto(code, ["javascript", "python", "typescript", "json", "css"])
+      }
+      setHighlightedCode(result.value)
+      setDetectedLanguage(result.language || "text")
+    } catch (err) {
+      console.error("Highlighting failed:", err)
+      setHighlightedCode(code) // fallback to raw
+      setDetectedLanguage("text")
+    }
+  }, [code, language])
 
   useEffect(() => {
     // Auto-detect language or use provided language
