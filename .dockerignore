@@ -1,0 +1,9 @@
+# Speeds up build context and keeps the image clean
+node_modules
+.next/cache
+.git
+.gitignore
+Dockerfile
+*.log
+.env*
+key.json
