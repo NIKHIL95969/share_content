@@ -52,27 +52,28 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
   }, [theme])
 
   useEffect(() => {
-    // Auto-detect language or use provided language
-    let result
-    if (language) {
-      result = hljs.highlight(code, { language })
-    } else {
-      result = hljs.highlightAuto(code, ["javascript", "python", "typescript", "json", "css"])
+    if (!code || typeof code !== "string") {
+      setHighlightedCode("")
+      setDetectedLanguage("text")
+      return
     }
-
-    setHighlightedCode(result.value)
-    setDetectedLanguage(result.language || "text")
+  
+    let result
+    try {
+      if (language) {
+        result = hljs.highlight(code, { language })
+      } else {
+        result = hljs.highlightAuto(code, ["javascript", "python", "typescript", "json", "css"])
+      }
+      setHighlightedCode(result.value)
+      setDetectedLanguage(result.language || "text")
+    } catch (err) {
+      console.error("Highlighting failed:", err)
+      setHighlightedCode(code) // fallback to raw
+      setDetectedLanguage("text")
+    }
   }, [code, language])
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error("Failed to copy code:", err)
-    }
-  }
 
   const handleModalCopy = async () => {
     try {
