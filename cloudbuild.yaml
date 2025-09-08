@@ -1,42 +1,38 @@
 steps:
-  # 1. Authenticate Docker for Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud auth configure-docker $REGION-docker.pkg.dev
-
-  # 2. Build Docker image
+  # 1. Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - '$REGION-docker.pkg.dev/$PROJECT_ID/share-repo/share-content:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}'
       - '.'
 
-  # 3. Push Docker image to Artifact Registry
+  # 2. Push Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '$REGION-docker.pkg.dev/$PROJECT_ID/share-repo/share-content:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}'
 
-  # 4. Deploy to Cloud Run
+  # 3. Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud run deploy share-content \
-          --image $REGION-docker.pkg.dev/$PROJECT_ID/share-repo/share-content:$COMMIT_SHA \
+        gcloud run deploy ${_SERVICE} \
+          --image ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA} \
           --platform managed \
-          --region $REGION \
+          --region ${_REGION} \
           --allow-unauthenticated \
-          --set-secrets "DOMAIN=projects/$PROJECT_ID/secrets/DOMAIN:latest" \
-          --set-secrets "MONGO_URL=projects/$PROJECT_ID/secrets/MONGO_URL:latest" \
-          --set-secrets "REDIS_URL=projects/$PROJECT_ID/secrets/REDIS_URL:latest" \
-          --set-secrets "TOKEN_SECRET=projects/$PROJECT_ID/secrets/TOKEN_SECRET:latest"
+          --set-secrets "DOMAIN=projects/${PROJECT_ID}/secrets/DOMAIN:latest" \
+          --set-secrets "MONGO_URL=projects/${PROJECT_ID}/secrets/MONGO_URL:latest" \
+          --set-secrets "REDIS_URL=projects/${PROJECT_ID}/secrets/REDIS_URL:latest" \
+          --set-secrets "TOKEN_SECRET=projects/${PROJECT_ID}/secrets/TOKEN_SECRET:latest"
 
 substitutions:
-  _PROJECT_ID: share-content-470918
-  _REGION: asia-south1
+  _REGION: us-central1
+  _REPO: share-content
+  _SERVICE: share-content
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}'
