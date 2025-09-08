@@ -27,7 +27,14 @@ steps:
           --set-secrets "DOMAIN=projects/${PROJECT_ID}/secrets/DOMAIN:latest" \
           --set-secrets "MONGO_URL=projects/${PROJECT_ID}/secrets/MONGO_URL:latest" \
           --set-secrets "REDIS_URL=projects/${PROJECT_ID}/secrets/REDIS_URL:latest" \
-          --set-secrets "TOKEN_SECRET=projects/${PROJECT_ID}/secrets/TOKEN_SECRET:latest"
+          --set-secrets "TOKEN_SECRET=projects/${PROJECT_ID}/secrets/TOKEN_SECRET:latest'
+
+# Add this section to fix the error
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# Make sure to specify the service account (you might already have this)
+serviceAccount: 'projects/your-project-id/serviceAccounts/416309094312-compute@developer.gserviceaccount.com'
 
 substitutions:
   _REGION: us-central1
