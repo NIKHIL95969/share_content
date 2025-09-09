@@ -1,4 +1,4 @@
-# 🚀 QuickShare - Seamless Content Sharing
+# 🚀 Taskynow - Seamless Content Sharing
 
 QuickShare is a web platform designed to solve the simple problem of sharing text, code snippets, and files between your devices without the hassle of logging into messaging apps. Share content publicly with a short, memorable code, or create an account to keep a permanent history of your shared items.
 
