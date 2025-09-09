@@ -6,14 +6,6 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
       - '.'
-steps:
-  # Step 1: Build Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-  - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
-  - '.'
 
   # Step 2: Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -23,39 +15,23 @@ steps:
 
   # Step 3: Deploy to Cloud Run with secrets
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
+    entrypoint: gcloud
     args:
-      steps:
-        # Step 1: Build Docker image (tagged with the commit short SHA)
-        - name: 'gcr.io/cloud-builders/docker'
-          args:
-            - 'build'
-            - '-t'
-            - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
-            - '.'
+      - run
+      - deploy
+      - share-content
+      - --image
+      - gcr.io/$PROJECT_ID/share-content:$SHORT_SHA
+      - --region
+      - asia-south1
+      - --platform
+      - managed
+      - --allow-unauthenticated
+      - --update-secrets
+      - MONGO_URL=MONGO_URL:latest
+      - REDIS_URL=REDIS_URL:latest
+      - TOKEN_SECRET=TOKEN_SECRET:latest
+      - DOMAIN=DOMAIN:latest
 
-        # Step 2: Push Docker image
-        - name: 'gcr.io/cloud-builders/docker'
-          args:
-            - 'push'
-            - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
-
-        # Step 3: Deploy to Cloud Run with runtime secrets
-        - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-          entrypoint: 'gcloud'
-          args:
-            - 'run'
-            - 'deploy'
-            - 'share-content'
-            - '--image'
-            - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
-            - '--region'
-            - 'asia-south1'
-            - '--platform'
-            - 'managed'
-            - '--allow-unauthenticated'
-            - '--update-secrets'
-            - 'MONGO_URL=MONGO_URL:latest,TOKEN_SECRET=TOKEN_SECRET:latest,DOMAIN=DOMAIN:latest,REDIS_URL=REDIS_URL:latest'
-
-      images:
-        - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'
+images:
+  - 'gcr.io/$PROJECT_ID/share-content:$SHORT_SHA'

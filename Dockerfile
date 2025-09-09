@@ -1,4 +1,6 @@
-# Install dependencies only when needed
+# ---------------------
+# Stage 1: Dependencies
+# ---------------------
 FROM node:22-alpine AS deps
 WORKDIR /app
 
@@ -9,17 +11,21 @@ RUN \
   elif [ -f yarn.lock ]; then yarn install; \
   else npm install; fi
 
-# Rebuild the source code only when needed
+# ---------------------
+# Stage 2: Builder
+# ---------------------
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build   # no env needed at build time
+RUN npm run build   # Builds Next.js app
 
-# Production image
+# ---------------------
+# Stage 3: Production
+# ---------------------
 FROM node:22-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.mjs ./
@@ -34,3 +40,16 @@ RUN \
 
 EXPOSE 8080
 CMD ["npm", "start"]
+
+# ---------------------
+# Stage 4: Development
+# ---------------------
+FROM node:22-alpine AS dev
+WORKDIR /app
+
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN npm install
+
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
