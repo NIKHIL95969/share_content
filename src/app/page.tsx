@@ -200,13 +200,14 @@ export default function Home() {
           }
         );
 
-        if (response.status === 200) {
-        console.log("After posting content", response);
-        setAllContent(response.data.allpost);
-      }
-
+        if (response.status === 201) {
+          console.log("After posting content", response);
+          // Optimistically add the new post to the top of the list
+          setAllContent(prevContent => [response.data.newPost, ...prevContent]);
+          setTotal(prevTotal => prevTotal + 1);
+        }
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error creating post:", error); // Consider showing a toast notification to the user
     } finally {
       setIsLoading(false);
     }

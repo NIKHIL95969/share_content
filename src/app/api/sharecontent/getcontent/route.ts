@@ -7,7 +7,9 @@ import { getListCache, setListCache } from '@/lib/cache';
 
 connect();
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 
 export async function POST(request: NextRequest){
     try {

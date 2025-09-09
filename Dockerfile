@@ -1,36 +1,55 @@
-# 1️⃣ Install dependencies only when needed
+# ---------------------
+# Stage 1: Dependencies
+# ---------------------
 FROM node:22-alpine AS deps
 WORKDIR /app
 
-# Copy only package files for caching
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN \
+  if [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then npm install -g pnpm && pnpm install; \
+  elif [ -f yarn.lock ]; then yarn install; \
+  else npm install; fi
 
-# Install dependencies
-RUN npm install --frozen-lockfile
-
-# 2️⃣ Build the source code
+# ---------------------
+# Stage 2: Builder
+# ---------------------
 FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Copy installed node_modules
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npm run build   # Builds Next.js app
 
-# Build Next.js app
-RUN npm run build
-
-# 3️⃣ Production image
+# ---------------------
+# Stage 3: Production
+# ---------------------
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copy only necessary files for runtime
 COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
+
+RUN \
+  if [ -f package-lock.json ]; then npm ci --omit=dev; \
+  elif [ -f pnpm-lock.yaml ]; then npm install -g pnpm && pnpm install --prod; \
+  elif [ -f yarn.lock ]; then yarn install --production; \
+  else npm install --omit=dev; fi
 
 EXPOSE 8080
-
-# Start Next.js in production
 CMD ["npm", "start"]
+
+# ---------------------
+# Stage 4: Development
+# ---------------------
+FROM node:22-alpine AS dev
+WORKDIR /app
+
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN npm install
+
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
