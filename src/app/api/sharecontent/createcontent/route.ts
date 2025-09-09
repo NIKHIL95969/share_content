@@ -7,7 +7,8 @@ import { bumpListVersion } from '@/lib/cache';
 
 connect();
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest){
     try {
@@ -46,12 +47,11 @@ export async function POST(request: NextRequest){
         if(!savedPost){
             return NextResponse.json({error: 'Unable to create post'}, {status: 400});
         }
-        const allpost = await ContentPost.find(filter, null, { sort: { createdAt: -1 } });
         // Invalidate list caches by bumping namespace version
         await bumpListVersion(temp ? 'true' : null);
 
 
-        return NextResponse.json({message: 'Post saved successfully', allpost}, {status: 200},);
+        return NextResponse.json({message: 'Post saved successfully', newPost: savedPost}, {status: 201},);
 
     } catch (error: any) {
         return NextResponse.json( {error: error.message}, {status: 500});
