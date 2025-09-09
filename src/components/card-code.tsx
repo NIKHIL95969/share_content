@@ -1,3 +1,5 @@
+//card-code.tsx
+
 "use client"
 
 import { Card } from "@/components/ui/card"
@@ -6,19 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Copy, Check, Expand } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
-import hljs from "highlight.js/lib/core"
-import javascript from "highlight.js/lib/languages/javascript"
-import python from "highlight.js/lib/languages/python"
-import typescript from "highlight.js/lib/languages/typescript"
-import json from "highlight.js/lib/languages/json"
-import css from "highlight.js/lib/languages/css"
+import hljs from "highlight.js"
 
-// Register languages
-hljs.registerLanguage("javascript", javascript)
-hljs.registerLanguage("python", python)
-hljs.registerLanguage("typescript", typescript)
-hljs.registerLanguage("json", json)
-hljs.registerLanguage("css", css)
 
 interface CodeCardProps {
   code: string
@@ -32,7 +23,7 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
   const [modalCopied, setModalCopied] = useState(false)
   const [highlightedCode, setHighlightedCode] = useState("")
   const [detectedLanguage, setDetectedLanguage] = useState("")
-  const { theme } = useTheme()
+  const { theme, resolvedTheme } = useTheme()
 
   useEffect(() => {
     const lightThemeUrl = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
@@ -48,20 +39,31 @@ export function CodeCard({ code, createdAt, title, language }: CodeCardProps) {
       document.head.appendChild(link)
     }
 
-    link.href = theme === "dark" ? darkThemeUrl : lightThemeUrl
-  }, [theme])
+    // Use resolvedTheme if theme is "system"
+    const currentTheme = theme === "system" ? resolvedTheme : theme
+    link.href = currentTheme === "dark" ? darkThemeUrl : lightThemeUrl
+  }, [theme, resolvedTheme])
 
   useEffect(() => {
-    // Auto-detect language or use provided language
-    let result
-    if (language) {
-      result = hljs.highlight(code, { language })
-    } else {
-      result = hljs.highlightAuto(code, ["javascript", "python", "typescript", "json", "css"])
+    if (!code) {
+      setHighlightedCode("")
+      setDetectedLanguage("plaintext")
+      return
     }
 
-    setHighlightedCode(result.value)
-    setDetectedLanguage(result.language || "text")
+    let result
+    try {
+      if (language) {
+        result = hljs.highlight(code, { language })
+      } else {
+        result = hljs.highlightAuto(code)
+      }
+      setHighlightedCode(result.value)
+      setDetectedLanguage(result.language ? result.language : "plaintext")
+    } catch (err) {
+      setHighlightedCode(code)
+      setDetectedLanguage("plaintext")
+    }
   }, [code, language])
 
   const handleCopy = async () => {
