@@ -7,7 +7,8 @@ import { ShareContentDialog } from "@/components/share-content-dialog";
 import { useEffect, useState, useCallback, memo } from "react";
 import PaginationControls from "@/components/pagination-controls";
 import { SkeletonGrid } from "@/components/skeleton-grid";
-import { RefreshCw, Clock } from "lucide-react";
+import { Share2, RefreshCw, Clock } from "lucide-react";
+import { ModeSwitcher } from "@/components/mode-switcher";
 import { useRouter } from "next/navigation";
 
 
@@ -128,7 +129,7 @@ export default function Home() {
                   <Clock className="mr-2 h-4 w-4" />
                   View Temporary
                 </Button>
-                <ModeToggle />
+                <ModeSwitcher/>
               </div>
             </header>
           </div>
@@ -136,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* Enhanced Main Content */}
-      <div className="max-w-8xl mx-auto">
+      <div className="">
         <div className="py-8 px-4 sm:px-6 lg:px-8">
           <ContentDisplay allContent={allContent} isLoading={isLoading} />
           <PaginationControls page={page} total={total} limit={limit} setPage={setPage} />
