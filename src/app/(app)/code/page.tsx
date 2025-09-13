@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, memo } from "react";
 import PaginationControls from "@/components/pagination-controls";
 import { SkeletonGrid } from "@/components/skeleton-grid";
 
+
 // Memoized content display component
 const ContentDisplay = memo(({ allContent, isLoading, limit }: { allContent: any[], isLoading: boolean, limit?: number }) => {
   // Show skeleton loader while loading
@@ -17,9 +18,9 @@ const ContentDisplay = memo(({ allContent, isLoading, limit }: { allContent: any
     return (
       <div className="flex justify-center items-center py-20">
         <div className="text-center space-y-4">
-          <div className="text-8xl opacity-20">⏰</div>
-          <h1 className="text-4xl font-bold text-muted-foreground">No temporary content yet</h1>
-          <p className="text-muted-foreground">Start sharing your first temporary piece of content!</p>
+          <div className="text-8xl opacity-20">🔗</div>
+          <h1 className="text-4xl font-bold text-muted-foreground">No content yet</h1>
+          <p className="text-muted-foreground">Start sharing your first piece of content!</p>
         </div>
       </div>
     );
@@ -35,7 +36,7 @@ const ContentDisplay = memo(({ allContent, isLoading, limit }: { allContent: any
           createdAt={new Date(
             content.createdAt || "2024-03-02"
           ).toLocaleDateString()} 
-          title="Temporary Content" 
+          title="Content" 
         />
       ))}
     </div>
@@ -44,14 +45,14 @@ const ContentDisplay = memo(({ allContent, isLoading, limit }: { allContent: any
 
 ContentDisplay.displayName = "ContentDisplay";
 
-export default function TempPage() {
+export default function Home() {
   const [allContent, setAllContent] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(6);
   const [total, setTotal] = useState(0);
-  
-  const API_URL = `/api/sharecontent/getcontent?temp=true&page=${page}&limit=${limit}`;
+    
+  const API_URL = `/api/sharecontent/getcontent?temp=false&page=${page}&limit=${limit}`;
 
   const handleGetContent = useCallback(async () => {
     try {
@@ -66,13 +67,13 @@ export default function TempPage() {
       if (response) {
         setAllContent(response.data);
         setTotal(response.total);
-        console.log("Temporary content successfully fetched!", response);
+        console.log("Content successfully fetched!", response);
       } else {
         console.error("Unexpected response status:", response.status);
       }
 
     } catch (error) {
-      console.error("Error fetching temporary content:", error);
+      console.error("Error fetching content:", error);
     } finally {
       setIsLoading(false);
     }
@@ -86,15 +87,8 @@ export default function TempPage() {
     <>
 
       {/* Enhanced Main Content */}
-      <div className="max-w-8xl mx-auto">
+      <div className="">
         <div className="py-8 px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 p-4 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
-            <h2 className="text-lg font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-2">
-              <span className="text-xl">⏰</span>
-              Temporary share is available for 24 hours only
-            </h2>
-          </div>
-          
           <ContentDisplay allContent={allContent} isLoading={isLoading} />
           <PaginationControls page={page} total={total} limit={limit} setPage={setPage} />
         </div>

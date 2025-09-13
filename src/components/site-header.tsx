@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 
 import { getColors } from "@/lib/colors"
 import { siteConfig } from "@/lib/config"
@@ -10,13 +13,33 @@ import { MainNav } from "@/components/main-nav"
 // import { MobileNav } from "@/components/mobile-nav"
 import { ModeSwitcher } from "@/components/mode-switcher"
 import { SiteConfig } from "@/components/site-config"
+import { ShareContentDialog } from "@/components/share-content-dialog"
 // import blocks from "@/registry/__blocks__.json"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { RefreshCw, Clock } from "lucide-react"
 
 export function SiteHeader() {
   const colors = getColors()
+  const router = useRouter()
+  const pathname = usePathname()
 //   const pageTree = source.pageTree
+
+  // Handle refresh functionality
+  const handleRefresh = () => {
+    // Trigger a page refresh for content pages
+    if (pathname === '/code' || pathname === '/temp') {
+      window.location.reload()
+    }
+  }
+
+  // Handle content creation
+  const handleContentCreated = (newContent: any) => {
+    // For now, just refresh the page if we're on a content page
+    if (pathname === '/code' || pathname === '/temp') {
+      window.location.reload()
+    }
+  }
 
   return (
     <header className="bg-background sticky top-0 z-50 w-full py-4">
@@ -51,6 +74,28 @@ export function SiteHeader() {
                 colors={colors}
                 navItems={siteConfig.navItems}
               /> */}
+            </div>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <ShareContentDialog onContentCreated={handleContentCreated} />
+              <Button 
+                onClick={handleRefresh} 
+                variant="outline"
+                size="sm"
+                className="px-3 py-2 hover:bg-muted/50 transition-all duration-200"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+              <Button
+                onClick={() => router.push('/temp')}
+                variant="outline"
+                size="sm"
+                className="px-3 py-2 transition-all duration-200"
+              >
+                <Clock className="mr-2 h-4 w-4" />
+                View Temporary
+              </Button>
             </div>
             <Separator
               orientation="vertical"
