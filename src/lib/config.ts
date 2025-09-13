@@ -6,7 +6,7 @@ export const siteConfig = {
     "A set of beautifully designed components that you can customize, extend, and build on.",
   links: {
     twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn-ui/ui",
+    github: "https://github.com/NIKHIL95969/QuickShare",
   },
   navItems: [
     {
