@@ -23,25 +23,7 @@ export function SiteFooter() {
       <div className="container-wrapper px-4 xl:px-6">
         <div className="flex h-(--footer-height) mb-16 items-center justify-between">
           <div className="text-muted-foreground w-full px-1 text-center text-xs leading-loose sm:text-sm">
-            Built by{" "}
-            <a
-              href={siteConfig.links.twitter}
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              shadcn
-            </a>{" "}
-            at{" "}
-            <a
-              href="https://vercel.com/new?utm_source=shadcn_site&utm_medium=web&utm_campaign=docs_cta_deploy_now_callout"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              Vercel
-            </a>
-            . The source code is available on{" "}
+            Built with ❤️{" "} by dev for {" "} world. The source code is available on{" "}
             <a
               href={siteConfig.links.github}
               target="_blank"
@@ -72,7 +54,7 @@ export function SiteFooter() {
             >
               {Icon && <Icon className="h-5 w-5" />}
               {/* Uncomment if you also want labels */}
-              {/* <span>{item.label}</span> */}
+              <span>{item.label}</span>
             </Link>
           )
         })}
